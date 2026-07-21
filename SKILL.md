@@ -1,6 +1,6 @@
 ---
 name: langchain-expert
-description: Review, write, or refactor LangChain code against 22 expert practices derived from the LangChain codebase, plus failure patterns from six expert-built production repos. Use this skill whenever the user shares Python code importing langchain, langchain_core, langchain_openai, langchain_anthropic, or langgraph and asks to review, check, improve, fix, or audit it — and also when writing NEW LangChain agent code from scratch, so the code is expert-grade from the first draft. Trigger on "review my agent", "is this good LangChain code", "check this chain", "why is my agent slow/expensive/breaking", or any code containing create_agent, AgentExecutor, LLMChain, or initialize_agent.
+description: Review, write, or refactor LangChain code against 23 expert practices derived from the LangChain codebase, plus failure patterns from six expert-built production repos. Use this skill whenever the user shares Python code importing langchain, langchain_core, langchain_openai, langchain_anthropic, or langgraph and asks to review, check, improve, fix, or audit it — and also when writing NEW LangChain agent code from scratch, so the code is expert-grade from the first draft. Trigger on "review my agent", "is this good LangChain code", "check this chain", "why is my agent slow/expensive/breaking", or any code containing create_agent, AgentExecutor, LLMChain, or initialize_agent.
 ---
 
 # LangChain Expert Review
@@ -35,7 +35,7 @@ Architecture is rarely the problem. Failures cluster in three classes — check 
 | **Correct logic, wrong lifetime or frequency** | fine in single-tenant tests | per-tenant cache with no eviction; DB commit per LLM call; re-tokenizing whole history per truncation step |
 | **Authorization assumed, never enforced** | resource fetched by id alone | handler loads by `id` with no owner filter; agent tool fetches a record id taken from model args, unchecked; batch endpoint drops the per-item check |
 
-In multi-user apps the third class is where the *severe* bugs are — it produced the only high-severity findings across a 13-repo audit (see practice 23).
+In multi-user apps the third class is where the *severe* bugs are — it produced the only high-severity findings across a 16-repo audit (see practice 23).
 
 Read error-handling and enforcement blocks **literally**, and ask of anything correct: what's its lifetime, its frequency, whose budget does it spend?
 

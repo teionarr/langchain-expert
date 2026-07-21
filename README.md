@@ -20,7 +20,7 @@ Most LangChain review advice is a style guide — import order, naming, "use the
 where production agents break.
 
 This skill is organised around where defects **actually** cluster in real codebases, which — across a
-13-repo audit of everything from a 152k-star platform to 1k-star agent templates — is almost never the
+16-repo audit of everything from a 152k-star platform to 1k-star agent templates — is almost never the
 architecture:
 
 | Failure class | What it looks like in the wild |
