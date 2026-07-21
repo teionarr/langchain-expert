@@ -113,8 +113,19 @@ the finding and showed our fix was worse than the alleged bug.
 Nor is the streak "consecutive": two fixes inside the same window — headroom's and one other — were
 *executed* against the code and were correct.
 
-**The one contrast the data does support:** fixes we executed were correct (2 of 2); fixes we only argued
-about were rewritten (9 of 9). Execution, not the rubric and not the reviewer, is what separated them.
+**And a controlled re-run disqualified even that.** We re-verified three audits from the same raw inputs
+against the same code, changing only the reviewer's framing — removing "expect it to confirm the bug" and
+"default to refuted when uncertain". **All three produced materially different conclusions**: two findings
+that had been dropped came back at CVSS 8.8 and 8.0; one that had been refuted came back as a real
+low-severity issue; a "likely novel" finding turned out to be acknowledged in an existing advisory; and
+one severity moved 2.4 points. The neutral reviewers also found evidence all previous passes had missed —
+including a named regression commit that was the single strongest piece of evidence in one audit.
+
+Pressure to reach a verdict produced *premature closure*, not rigour.
+
+**So: no number on this page derived from an adversarial pass is a measurement.** Not the fix-defect
+count, not the survival rate. What survives is a procedural claim, not a statistical one — an executed
+fix is evidence; an argued one is an opinion.
 
 Treat every number on this page as provisional until an external verdict exists.
 
