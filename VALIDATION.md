@@ -59,6 +59,19 @@ flatters itself.
 | 11 | [codeinterpreter-api](https://github.com/shroominic/codeinterpreter-api) | 3.8k | L2 | sessions + exec | legacy deps | Finding withheld — **repo abandoned** (no merged PR since 2023), so not reported | audited |
 | 12 | [shell-ai](https://github.com/ricklamers/shell-ai) | 1.2k | L2 | CLI chain | modern | Finding withheld pending disclosure | audited |
 | 13 | [RasaGPT](https://github.com/paulpierre/RasaGPT) | 2.5k | L2 | chains + webhook | mixed | Reference/demo project, documented by its authors as unauthenticated by design — excluded from findings | out of scope |
+| 14 | *withheld* | ~15k | L4 | — | — | Under coordinated disclosure | 🔒 held — no private channel available |
+| 15 | *withheld* | ~22k | L3 | — | — | Under coordinated disclosure | 🔒 privately disclosed |
+| 16 | *withheld* | ~6k | L4 | — | — | Under coordinated disclosure | 🔒 held — no private channel available |
+| 17 | [headroom](https://github.com/headroomlabs-ai/headroom) | 61k | L3 | library-use / inverted adapter | current | 🔴 The LangGraph compression node **inflates** context instead of shrinking it: `ToolMessage(...)` is rebuilt without `id=msg.id`, and the node returns a bare `{"messages": [...]}` — under `add_messages` an id-less message is *appended*, not replaced, so the documented wiring doubles history. 🔴 A second: `wrap_tools_with_headroom` returns tools no agent can invoke. | non-security — publicly filable |
+| 18 | *withheld* | ~27k | L4 | — | — | Under coordinated disclosure | 🔒 privately disclosed |
+| 19 | *withheld* | ~26k | L1–L2 | — | — | Under coordinated disclosure | 🔒 pack ready |
+| 20 | *withheld* | ~55k | L4 | — | — | Under coordinated disclosure — incl. a published advisory that **appears unfixed** | 🔒 pack ready |
+| 21 | *withheld* | ~12k | L4 | — | — | Under coordinated disclosure | 🔒 pack ready |
+| 22 | *withheld* | ~41k | L3 | — | — | Under coordinated disclosure | 🔒 in adversarial review |
+
+Repo names for rows 14–22 are withheld along with the findings, and star counts are rounded. Listing a
+popular product beside "unfixed vulnerability" is itself a pointer for an attacker and helps no defender
+while the fix does not exist. Names are filled in as each advisory publishes.
 
 ---
 
@@ -66,15 +79,25 @@ flatters itself.
 
 | Metric | Result |
 |---|---|
-| Repos reviewed | **13** (12 LangChain + 1 excluded at the shape gate) |
-| High-severity findings | **2** — *both* in the authorization class |
-| Filed or disclosed | **3** (1 public issue + PR; 2 private security disclosures) |
-| Already reported by others | 1 |
-| Rejected as unmaintained | 1 |
-| Clean / control cases | 2 |
+| Repos reviewed | **22** (20 LangChain + 1 excluded at the shape gate + 1 out of scope) |
+| Security findings under coordinated disclosure | **9 repos** |
+| Filed or disclosed upstream | 1 public issue + PR · 4 private security disclosures · 5 packs ready |
+| Already reported by others | 2 |
+| Rejected as unmaintained / dead | 1 audited + 3 screened out before audit |
+| Clean / control cases | 2, plus 1 correct **N/A** on authorization |
 
-**The headline result: both high-severity findings came from a failure class the rubric did not cover.**
-That single fact drove the largest change to the skill.
+**The headline result: every high-severity finding, in both cohorts, came from the authorization class.**
+Before practice 23 existed, the two that surfaced did so on a hunch. With it active, **5 of the next 6
+audits** produced an authorization finding — and the sixth was an honest N/A (an in-process library with
+no handlers and no caller identity), not a forced one.
+
+**The second result is about process, not code.** Every finding that went through an independent
+adversarial pass survived it — and every *report* was wrong. Across nine consecutive audits the proposed
+one-line fix was wrong: a tautology, a cache bypass, a destroyed admin capability, a name-vs-id mismatch,
+a broken disaster-recovery path, a shallow copy that shared the state it meant to isolate, a filter on a
+column the table doesn't have, a prefix rule that would have 403'd every attachment download, and a
+fail-closed change that would have taken down inference. Two of those would have caused a production
+outage. That is why the red-team pass is now step 7 rather than advice.
 
 ---
 
@@ -86,6 +109,9 @@ That single fact drove the largest change to the skill.
 | 2 | One excellent finding was **already reported with two stalled PRs**; another repo had been **abandoned since 2023**. Both audits were wasted effort that a two-minute check would have prevented. | **Procedure step 5** — check issues/PRs for novelty and last-merge activity *before* investing. |
 | 3 | Severity was repeatedly over-called until defaults and call paths were checked: one finding sits behind an off-by-default flag; another repo's most alarming lead turned out to be **dead code** with no live writers. | **Procedure step 5** — trace to a default config value and a live call path before assigning severity. |
 | 4 | One repo cost a full clone and investigation before revealing it wasn't a LangChain application at all. | **Shape gate** — "not a LangChain app" added to step 1, checked first. |
+| 5 | The finding survived scrutiny almost every time; the **report** did not. Nine consecutive audits produced a wrong fix, and two of those would have caused an outage. Severity, lead ordering, and one flatly false claim about a return type were also caught only by a second pass. | **Procedure step 7** — red-team in a *fresh context* before disclosing. Attack novelty, the load-bearing claim, the fix, and severity. Review the **set**, since only a cross-finding pass catches a mis-ranked lead. |
+| 6 | Two audits independently found a guard that was **present, called, and passed the caller's identity — and still enforced nothing**: one handed the guard the same object as both subject and baseline; one authorized a session id and then acted on an unrelated caller-supplied object key. The asymmetry technique looks for a *missing* guard and sees neither. | **Practice 23** — diff the guard's **arguments** across call sites, and confirm the object it authorizes is the object it acts on. The second shape is the more dangerous: that handler reads as the compliant sibling, so copying it *becomes* the fix. |
+| 7 | On a repo with 30 published advisories, two of three findings turned out to be **incomplete patches** of known CVEs rather than new bugs — and one *published* advisory was observably still unfixed. Framing them as new discoveries would have had all three closed as duplicates. | **Procedure step 7 (novelty)** — check published advisories, not just issues and PRs. An incomplete-fix report is legitimate and often stronger, but must be framed as the delta. |
 
 ### Lessons that *confirmed* the rubric (no change needed)
 
@@ -97,8 +123,13 @@ That single fact drove the largest change to the skill.
 
 ## Open work
 
-- Extend the golden set to **20 repos**, running the *patched* skill to test whether the authorization
-  lens raises the high-severity hit rate.
+- ~~Extend the golden set to **20 repos**~~ — done, at 22. The authorization lens raised the hit rate from
+  2/13 to 5/6 on the first cohort that used it.
 - Re-audit repos 1, 7, 8, 10, 12 with practice 23 applied — they were reviewed before the
   authorization lens existed.
 - Fill in withheld entries as their fixes and advisories publish.
+- **Test whether step 7 changes outcomes or only confidence.** It has caught something in every audit so
+  far, which is either strong evidence or a sign the bar for "caught something" is too low. The honest
+  test is a finding that survives an adversarial pass entirely unchanged.
+- Screening is cheap and worth stating: three candidate repos (35k★, 39k★, 36k★) were dropped before any
+  audit — two with no merged PR in over a year, one archived. Liveness first.
