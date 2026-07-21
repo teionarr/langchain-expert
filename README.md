@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="assets/banner.gif" alt="langchain-expert banner" width="100%"/>
+<img src="assets/langchain-expert-banner.gif" alt="langchain-expert banner" width="100%"/>
 
 # langchain-expert
 
