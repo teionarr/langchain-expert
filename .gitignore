@@ -1,2 +1,9 @@
 .DS_Store
 __pycache__/
+
+# --- PRIVATE working records — never commit to the public repo ---
+# Unredacted audit log: contains details of vulnerabilities that are not yet fixed/public.
+AUDIT-LOG.md
+# Repro scripts, raw agent reports, and other per-audit working artifacts.
+artifacts/
+_private/
