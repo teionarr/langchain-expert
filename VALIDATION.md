@@ -67,7 +67,7 @@ flatters itself.
 | 19 | *withheld* | ~26k | L1–L2 | — | — | Under coordinated disclosure | 🔒 pack ready |
 | 20 | *withheld* | ~55k | L4 | — | — | Under coordinated disclosure — incl. a published advisory that **appears unfixed** | 🔒 pack ready |
 | 21 | *withheld* | ~12k | L4 | — | — | Under coordinated disclosure | 🔒 pack ready |
-| 22 | *withheld* | ~41k | L3 | — | — | Under coordinated disclosure | 🔒 in adversarial review |
+| 22 | [LibreChat](https://github.com/danny-avila/LibreChat) | 41k | L3 | SDK-host / graph-native | modern | ❌ **Lead finding refuted.** A file-ownership guard that reads as a tautology — called with the same object as subject and baseline — turned out to be a deliberate model change the maintainer authored two weeks earlier, *inside the audited tree*, rewriting the test to assert exactly that behaviour. Agent ACL, not file ownership, is now the gate. 🟡 One survivor, Low: a shared MCP server config is writable behind a VIEW-only gate. | **refuted + Low → PR, not advisory** |
 
 Repo names for rows 14–22 are withheld along with the findings, and star counts are rounded. Listing a
 popular product beside "unfixed vulnerability" is itself a pointer for an attacker and helps no defender
@@ -81,6 +81,7 @@ while the fix does not exist. Names are filled in as each advisory publishes.
 |---|---|
 | Repos reviewed | **22** (20 LangChain + 1 excluded at the shape gate + 1 out of scope) |
 | Security findings under coordinated disclosure | **9 repos** |
+| Lead findings **refuted** by adversarial review | **1** |
 | Filed or disclosed upstream | 1 public issue + PR · 4 private security disclosures · 5 packs ready |
 | Already reported by others | 2 |
 | Rejected as unmaintained / dead | 1 audited + 3 screened out before audit |
@@ -91,8 +92,9 @@ Before practice 23 existed, the two that surfaced did so on a hunch. With it act
 audits** produced an authorization finding — and the sixth was an honest N/A (an in-process library with
 no handlers and no caller identity), not a forced one.
 
-**The second result is about process, not code.** Every finding that went through an independent
-adversarial pass survived it — and every *report* was wrong. Across nine consecutive audits the proposed
+**The second result is about process, not code.** Nine of ten findings that went through an independent
+adversarial pass survived — and every *report* was wrong. The tenth did not survive at all: see repo 22,
+where the "bug" was a deliberate change the maintainer had authored himself. Across nine consecutive audits the proposed
 one-line fix was wrong: a tautology, a cache bypass, a destroyed admin capability, a name-vs-id mismatch,
 a broken disaster-recovery path, a shallow copy that shared the state it meant to isolate, a filter on a
 column the table doesn't have, a prefix rule that would have 403'd every attachment download, and a
@@ -110,8 +112,9 @@ outage. That is why the red-team pass is now step 7 rather than advice.
 | 3 | Severity was repeatedly over-called until defaults and call paths were checked: one finding sits behind an off-by-default flag; another repo's most alarming lead turned out to be **dead code** with no live writers. | **Procedure step 5** — trace to a default config value and a live call path before assigning severity. |
 | 4 | One repo cost a full clone and investigation before revealing it wasn't a LangChain application at all. | **Shape gate** — "not a LangChain app" added to step 1, checked first. |
 | 5 | The finding survived scrutiny almost every time; the **report** did not. Nine consecutive audits produced a wrong fix, and two of those would have caused an outage. Severity, lead ordering, and one flatly false claim about a return type were also caught only by a second pass. | **Procedure step 7** — red-team in a *fresh context* before disclosing. Attack novelty, the load-bearing claim, the fix, and severity. Review the **set**, since only a cross-finding pass catches a mis-ranked lead. |
-| 6 | Two audits independently found a guard that was **present, called, and passed the caller's identity — and still enforced nothing**: one handed the guard the same object as both subject and baseline; one authorized a session id and then acted on an unrelated caller-supplied object key. The asymmetry technique looks for a *missing* guard and sees neither. | **Practice 23** — diff the guard's **arguments** across call sites, and confirm the object it authorizes is the object it acts on. The second shape is the more dangerous: that handler reads as the compliant sibling, so copying it *becomes* the fix. |
-| 7 | On a repo with 30 published advisories, two of three findings turned out to be **incomplete patches** of known CVEs rather than new bugs — and one *published* advisory was observably still unfixed. Framing them as new discoveries would have had all three closed as duplicates. | **Procedure step 7 (novelty)** — check published advisories, not just issues and PRs. An incomplete-fix report is legitimate and often stronger, but must be framed as the delta. |
+| 6 | Two audits independently found a guard that was **present, called, and passed the caller's identity — and still enforced nothing**: one handed the guard the same object as both subject and baseline; one authorized a session id and then acted on an unrelated caller-supplied object key. The asymmetry technique looks for a *missing* guard and sees neither. **The first of the two was then refuted** — the maintainer had authored that exact line two weeks earlier and rewritten its test to assert the behaviour. The *tell* fired correctly; the conclusion did not. | **Practice 23** — diff the guard's **arguments** across call sites, confirm the object it authorizes is the object it acts on, **and then check `git log` and the guard's test for intent**. The second shape is the more dangerous: that handler reads as the compliant sibling, so copying it *becomes* the fix. |
+| 7 | The first **full refutation** of the series: a lead finding died because the maintainer had authored the "bug" himself, inside the audited tree, and inverted its test in the same commit. The novelty check had queried advisories and two PRs already in mind — but never the finding's own file, where that commit is the second entry. The proposed fix would also have made a revert button destroy data. | **Procedure step 7 (novelty)** — `git log --follow` the file *first*, before any tracker search. A commit that **created** the line you are calling a bug ends the finding, and it is the cheapest check available. |
+| 8 | On a repo with 30 published advisories, two of three findings turned out to be **incomplete patches** of known CVEs rather than new bugs — and one *published* advisory was observably still unfixed. Framing them as new discoveries would have had all three closed as duplicates. | **Procedure step 7 (novelty)** — check published advisories, not just issues and PRs. An incomplete-fix report is legitimate and often stronger, but must be framed as the delta. |
 
 ### Lessons that *confirmed* the rubric (no change needed)
 
@@ -130,6 +133,8 @@ outage. That is why the red-team pass is now step 7 rather than advice.
 - Fill in withheld entries as their fixes and advisories publish.
 - **Test whether step 7 changes outcomes or only confidence.** It has caught something in every audit so
   far, which is either strong evidence or a sign the bar for "caught something" is too low. The honest
-  test is a finding that survives an adversarial pass entirely unchanged.
+  test is a finding that survives an adversarial pass entirely unchanged — that has still not happened.
+  What *has* now happened is a full refutation (repo 22), which is the stronger evidence: the pass is
+  capable of returning "there is no finding here", not only "here are corrections".
 - Screening is cheap and worth stating: three candidate repos (35k★, 39k★, 36k★) were dropped before any
   audit — two with no merged PR in over a year, one archived. Liveness first.

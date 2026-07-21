@@ -99,7 +99,7 @@ This skill is **tested against real code, and the misses are recorded too.**
 | Filed / disclosed upstream | 1 public issue + PR · 4 private advisories · 5 packs ready |
 | Already reported by others | 2 |
 | Clean control cases | 2, plus 1 correct **N/A** |
-| Reports corrected by an adversarial pass | **9 of 9** |
+| Reports changed by an adversarial pass | **10 of 10** — incl. **1 lead finding refuted outright** |
 
 Every change to the rubric is traceable to the specific audit that exposed the gap. Full breakdown,
 including LangChain-depth ratings per repo → [VALIDATION.md](VALIDATION.md)
