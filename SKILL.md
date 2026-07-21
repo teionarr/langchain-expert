@@ -33,12 +33,14 @@ Architecture is rarely the problem. Failures cluster in three classes — check 
 | Class | Signature | Seen as |
 |---|---|---|
 | **Guarantee asserted, weakly implemented** | control lives in prompt/parsing layer | `or True` killing an error classifier; parse failure defaulting to a confident verdict; read-only enforced by `startswith` |
-| **Correct logic, wrong lifetime or frequency** | fine in single-tenant tests | per-tenant cache with no eviction; DB commit per LLM call; re-tokenizing whole history per truncation step |
+| **Correct logic, wrong lifetime or frequency** | fine in single-tenant tests | per-tenant cache with no eviction; DB commit per LLM call; re-tokenizing whole history per truncation step; **a module-level tool/model singleton rebound per request** |
 | **Authorization assumed, never enforced** | resource fetched by id alone | handler loads by `id` with no owner filter; agent tool fetches a record id taken from model args, unchecked; batch endpoint drops the per-item check |
 
 In multi-user apps the third class is where the *severe* bugs are — it produced the only high-severity findings across a 16-repo audit (see practice 23).
 
 Read error-handling and enforcement blocks **literally**, and ask of anything correct: what's its lifetime, its frequency, whose budget does it spend?
+
+**Gradio/Streamlit-shaped apps deserve a specific look:** there is no request object to make sharing visible, so per-request mutation of a module-level singleton (`TOOL_REGISTRY[name].retrievers = user_scoped`) reads as ordinary code and is the highest-yield bug in that shape — under concurrency it serves one user's private documents inside another user's answer. The tell is a per-request value assigned onto an object that was constructed at import time.
 
 ## Value vs plumbing (weight findings by this)
 
