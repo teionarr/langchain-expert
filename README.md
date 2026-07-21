@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="assets/banner.gif" alt="langchain-expert banner" width="100%"/>
+
 # langchain-expert
 
 **A code-review skill for LangChain & LangGraph — 23 practices, validated against real production repos.**
