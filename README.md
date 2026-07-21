@@ -33,7 +33,8 @@ architecture:
 
 That third class produced **every** high-severity finding across the audit, and most review checklists
 miss it entirely. Once it was written down as a practice, **5 of the next 6** audits produced one — and
-the sixth was an honest N/A. → [VALIDATION.md](VALIDATION.md)
+the sixth was an honest N/A. *(That counts whether the lens fired, not whether it was right — see the
+caution in VALIDATION.md.)* → [VALIDATION.md](VALIDATION.md)
 
 ## Quick start
 
@@ -99,7 +100,7 @@ This skill is **tested against real code, and the misses are recorded too.**
 | Filed / disclosed upstream | 1 public issue + PR · 4 private advisories · 5 packs ready |
 | Already reported by others | 2 |
 | Clean control cases | 2, plus 1 correct **N/A** |
-| Reports changed by an adversarial pass | **10 of 10** — incl. **1 lead finding refuted outright** |
+| External verdicts (merged fix / advisory / maintainer confirmation) | **0** — see the caution in VALIDATION.md |
 
 Every change to the rubric is traceable to the specific audit that exposed the gap. Full breakdown,
 including LangChain-depth ratings per repo → [VALIDATION.md](VALIDATION.md)

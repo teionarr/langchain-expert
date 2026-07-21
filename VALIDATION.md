@@ -92,14 +92,31 @@ Before practice 23 existed, the two that surfaced did so on a hunch. With it act
 audits** produced an authorization finding — and the sixth was an honest N/A (an in-process library with
 no handlers and no caller identity), not a forced one.
 
-**The second result is about process, not code.** Nine of ten findings that went through an independent
-adversarial pass survived — and every *report* was wrong. The tenth did not survive at all: see repo 22,
-where the "bug" was a deliberate change the maintainer had authored himself. Across nine consecutive audits the proposed
-one-line fix was wrong: a tautology, a cache bypass, a destroyed admin capability, a name-vs-id mismatch,
-a broken disaster-recovery path, a shallow copy that shared the state it meant to isolate, a filter on a
-column the table doesn't have, a prefix rule that would have 403'd every attachment download, and a
-fail-closed change that would have taken down inference. Two of those would have caused a production
-outage. That is why the red-team pass is now step 7 rather than advice.
+> ⚠️ **Read that number carefully — it counts whether the lens *fired*, not whether it was right.** There
+> is no false-positive denominator here: we record findings shipped, never candidates dropped. A lens
+> firing in 5 of 6 repos is equally consistent with a real epidemic and with over-firing, and the same
+> six audits are where our severity deflations cluster (8.1→6.5, 🟠→🟡, 🟠→4.8/5.4, three endpoints→one).
+> The six are also the *numbered* entries only; three later audits with worse outcomes sit outside it.
+
+**The second result is a caution about this whole page.** An independent adversarial pass has changed
+something in every audit it reviewed — most often the proposed fix, in nine cases: a tautology, a cache
+bypass, a destroyed admin capability, a name-vs-id mismatch, a broken disaster-recovery path, a shallow
+copy that shared the state it meant to isolate, a prefix rule that would have 403'd every attachment
+download, and a fail-closed change that would have taken down inference. Two would have caused an outage.
+
+That is easy to read as "the review catches everything." It is not that. It measures a **gate catching
+defects in drafts**, not a defect rate in shipped work — because nothing here has shipped. Across 22
+repos: **zero merged fixes, zero published advisories, zero maintainer confirmations.** The one time an
+oracle outside our own control was consulted (a maintainer's own merged commit, repo 22) it **refuted**
+the finding and showed our fix was worse than the alleged bug.
+
+Nor is the streak "consecutive": two fixes inside the same window — headroom's and one other — were
+*executed* against the code and were correct.
+
+**The one contrast the data does support:** fixes we executed were correct (2 of 2); fixes we only argued
+about were rewritten (9 of 9). Execution, not the rubric and not the reviewer, is what separated them.
+
+Treat every number on this page as provisional until an external verdict exists.
 
 ---
 
