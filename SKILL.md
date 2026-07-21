@@ -63,7 +63,7 @@ Spend the budget on 💎. A crude retry helper is 🟡 — it'll be deleted anyw
 7. Failure handling declarative: fallback + retry middleware, not try/except pyramids.
 
 **C. Context**
-8. Budget context from day one; trigger as a *fraction* of the model's window. Context management runs on the hot path — re-counting all tokens inside a truncation loop is quadratic per request. Preserve `tool_call`/`tool_result` pairing when dropping messages or provider APIs reject the request.
+8. Budget context from day one; trigger as a *fraction* of the model's window. Context management runs on the hot path — re-counting all tokens inside a truncation loop is quadratic per request. Preserve `tool_call`/`tool_result` pairing when dropping messages or provider APIs reject the request. **In LangGraph the opposite failure is quieter and more common:** a node returns `{"messages": [...]}` believing it *replaces*, but `add_messages` matches on `.id` and **appends** anything lacking one — so a rebuilt message doubles the history instead of shrinking it, and leaves two results for one `tool_call_id`. Any node writing to an `add_messages` channel must preserve `id` on rebuilt messages, or lead with `RemoveMessage(REMOVE_ALL_MESSAGES)`. A test that calls the node as a bare function instead of compiling the graph will never catch this — check how the node is tested, not just what it returns.
 9. History is a cache with an eviction policy, not a log. Truncate/summarize tool outputs before they enter context.
 
 **D. Tools & output**
