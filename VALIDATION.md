@@ -19,6 +19,16 @@ Withheld entries are filled in once the corresponding fix and advisory are publi
 
 ## Method
 
+> ### ⚠️ Sample bias — read before drawing conclusions from this table
+> Every repo here is a **popular, actively maintained project built by strong engineers**. That makes it a
+> good test of whether the skill finds *subtle* defects in *good* code — and a poor test of everything
+> else. Most of the 23 practices never fired in this set, because this code already passes them. That is
+> **not** evidence those practices are low-value: on a first LangChain agent, the ones about hand-rolled
+> loops, `json.loads` on model prose, provider classes in business logic, and `assert` as a guard are
+> exactly the ones that will fire. **Nothing here speaks to how the skill performs on beginner code.**
+> Auditing low-star, early-stage repos is open work, and until it is done this table's silence on those
+> practices should be read as "untested", not "unnecessary".
+
 A repo enters the golden set only if it is **genuinely built on LangChain** and **actually reviewed** —
 not skimmed. Every finding is qualified before it counts:
 
@@ -159,6 +169,10 @@ Treat every number on this page as provisional until an external verdict exists.
 - Re-audit repos 1, 7, 8, 10, 12 with practice 23 applied — they were reviewed before the
   authorization lens existed.
 - Fill in withheld entries as their fixes and advisories publish.
+- **Audit early-stage / low-star repos.** The entire golden set is expert-built code, so the basic
+  practices are untested rather than unneeded. This is the largest gap in the validation.
+- **Record candidates *dropped* per audit**, not only findings shipped — without a denominator no
+  false-positive rate can ever be computed.
 - **Test whether step 7 changes outcomes or only confidence.** It has caught something in every audit so
   far, which is either strong evidence or a sign the bar for "caught something" is too low. The honest
   test is a finding that survives an adversarial pass entirely unchanged — that has still not happened.
