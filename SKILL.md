@@ -95,6 +95,18 @@ Spend the budget on 💎. A crude retry helper is 🟡 — it'll be deleted anyw
 **Severity is set by identifier reachability, not by data sensitivity.** Before scoring one of these, establish how an attacker obtains the id: an auto-increment integer PK is enumerable (severe); a random UUID usually is not (`AC:H`) — *unless* a listing endpoint, URL, log, or citation leaks it; and a **name** that is globally unique and human-guessable is as good as enumerable even when the id is not. Then check what actually leaks — an index of file names is `C:L`, message bodies are `C:H`. The same bug class scored 4.3 and 6.5 in two different repos on these questions alone.
 **Find it by asymmetry, not pattern-matching.** Grepping for `.where(id == ...)` mostly yields false positives, because the check normally sits one frame up in a helper. Instead: locate the module's canonical guard (`check_*_access`, `_resolve_visible_*`), enumerate its call sites, and diff against every handler touching that resource — **the outliers are the finding**. **Resolve the guard's whole *family* before diffing**, or the diff is worthless: follow the canonical check's callers up one frame to collect every wrapper name (`_ensure_access`, `_ensure_mutable_access`, `_ensure_delete_access`…) and diff against that set — grepping one name produced 13 false positives that buried the 5 real ones. A second, cheaper entry point: **when a design doc or comment asserts a boundary in prose, grep for the predicate that enforces it** — an asserted boundary with no predicate is the finding, and the prose tells you which granularity to check. Two high-yield tells: an identity parameter that is accepted, logged, or even stored but **never appears in a query predicate**; and a guard whose test file has a `rejects_*` case for every sibling but one.
 
+## Fixing what you find
+
+A finding without a fix is half a review — but an unvalidated fix is worse than none, so run step 6 before you recommend anything. Fix shapes by class:
+
+| Class | Fix shape | What the naive fix breaks |
+|---|---|---|
+| **Guarantee asserted, weakly implemented** | Move the control out of the prompt/parse layer into something *enforceable*: a type contract, a query predicate, a privilege, a sandbox. Fail **closed** — on parse failure emit an explicit `undetermined`, never a plausible default. | "Just return the safe default" usually *is* the bug — it silently disables the control. And swapping in a lenient parser removes the exception the old fallback depended on; add an explicit type guard so a non-conforming result still fails closed. |
+| **Wrong lifetime or frequency** | Bound it: `max_size` **and** active eviction — a TTL checked only on read frees nothing. Pop the lock/aux dict alongside the entry it guards. Or build per request. | Per-request construction can regress cost and latency — establish what the singleton was actually buying before deleting it. |
+| **Authorization assumed, never enforced** | `owner` **OR** the specific privileged case — never an unconditional owner filter. Bind identity into the tool factory's closure; re-root client-supplied scope keys under the authenticated one. | The system/admin paths that legitimately bypass the check (an agent persisting its own messages; an owner revoking a member's share); filtering on the wrong key (name vs id); a cache or second route that never reaches the layer you fixed. |
+
+Prefer the codebase's **existing** primitive over a new one — reusing the guard it already ships is the difference between a patch a maintainer merges and one they rewrite. And when the permissive behaviour turns out to be load-bearing, say so in the report rather than shipping a fix that breaks their product.
+
 ## Output format
 
 ```
