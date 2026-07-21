@@ -1,6 +1,6 @@
 <div align="center">
 
-# expert-langchain
+# langchain-expert
 
 **A code-review skill for LangChain & LangGraph — 23 practices, validated against real production repos.**
 
@@ -38,7 +38,7 @@ it entirely. → [VALIDATION.md](VALIDATION.md)
 it by name, or simply point an agent at `SKILL.md`:
 
 ```
-Review this repo with expert-langchain.
+Review this repo with langchain-expert.
 ```
 
 **By hand** — `SKILL.md` is a self-contained checklist. Work the procedure top to bottom.
@@ -101,6 +101,12 @@ to the golden set, including the false leads. Second most valuable: **an audit t
 practice.** A rubric that can't be wrong isn't measuring anything.
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) · [SECURITY.md](SECURITY.md) · [Code of Conduct](CODE_OF_CONDUCT.md)
+
+## Provenance
+
+Builds on Anthropic's `expert-langchain` skill, extended with a third failure class
+(authorization), a severity-qualification step, and the validation harness in
+[VALIDATION.md](VALIDATION.md).
 
 ## License
 

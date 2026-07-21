@@ -1,6 +1,6 @@
 # Validation — the golden set
 
-How the `expert-langchain` skill performs against real, popular open-source LangChain projects.
+How the `langchain-expert` skill performs against real, popular open-source LangChain projects.
 Each entry is a repo the skill was actually run against, with what it found and what it taught us.
 
 ## Disclosure policy

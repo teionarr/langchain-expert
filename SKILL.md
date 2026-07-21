@@ -1,9 +1,9 @@
 ---
-name: expert-langchain
+name: langchain-expert
 description: Review, write, or refactor LangChain code against 22 expert practices derived from the LangChain codebase, plus failure patterns from six expert-built production repos. Use this skill whenever the user shares Python code importing langchain, langchain_core, langchain_openai, langchain_anthropic, or langgraph and asks to review, check, improve, fix, or audit it — and also when writing NEW LangChain agent code from scratch, so the code is expert-grade from the first draft. Trigger on "review my agent", "is this good LangChain code", "check this chain", "why is my agent slow/expensive/breaking", or any code containing create_agent, AgentExecutor, LLMChain, or initialize_agent.
 ---
 
-# Expert LangChain Review
+# LangChain Expert Review
 
 Reviewing → follow the procedure below. Writing new code → skim the practices, then copy the shape in `references/gold-standard-agent.py`. Need rationale, evidence, or examples for any practice → `references/notes.md`.
 
