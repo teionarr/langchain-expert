@@ -173,6 +173,11 @@ Treat every number on this page as provisional until an external verdict exists.
   practices are untested rather than unneeded. This is the largest gap in the validation.
 - **Record candidates *dropped* per audit**, not only findings shipped — without a denominator no
   false-positive rate can ever be computed.
+- **A known-CVE recall test came back NULL (Experiment 3).** 5 LangChain-component CVEs, with-skill vs
+  control, both blind: both arms scored 5/5, delta 0. The base model finds these public bugs unaided, and
+  the single-file bugs chosen need no skill. It measured nothing about recall — the skill still has zero
+  external validation of bug-finding. A discriminating test needs bugs outside training data and hard
+  enough that a plain reviewer misses them (the cross-file authz class, or seeded/undisclosed defects).
 - **Test whether step 7 changes outcomes or only confidence.** It has caught something in every audit so
   far, which is either strong evidence or a sign the bar for "caught something" is too low. The honest
   test is a finding that survives an adversarial pass entirely unchanged — that has still not happened.
