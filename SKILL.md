@@ -81,8 +81,8 @@ Spend the budget on 💎. A crude retry helper is 🟡 — it'll be deleted anyw
 
 **E. State**
 13. Multi-turn or long-running → checkpointer. **Exception:** `langgraph.json` means the platform injects persistence; absence in code is correct.
-14. Human approval = interrupt-based HITL on a checkpointed graph, never `input()` or polling.
-15. Run-scoped state in graph state; durable memory in a `store`.
+14. Human approval = interrupt-based HITL on a checkpointed graph, never `input()` or polling. Same for a long-running *task* (a batch job, a training run): a `while not job.done(): sleep(...)` block inside a node isn't durable — a crash restarts the whole run — so it belongs behind the same pause/resume, not an in-memory wait.
+15. Run-scoped state in graph state; durable memory in a `store`. **State written to a checkpointed channel must be serializable** — a live client, connection, lambda, or other handle put in state (`{"messages": [...], "db": engine.connect()}`) breaks the checkpoint write or the resume. The trap is that it *passes in dev* under `MemorySaver` (keeps live refs) and *fails in prod* under `SqliteSaver`/`PostgresSaver` (which actually serialize) — so check the persisted checkpointer, not the in-memory one.
 
 **F. Safety & cost**
 16. Circuit breakers mandatory. Accept equivalents (named config ceilings, list slicing before `gather`, `.with_retry`); per-loop named ceilings are the gold standard. **Multi-tenant:** ceilings and usage counters must be per-tenant; cost tracking fails soft but emits a *metric*, not just a log; flag `tenant:model` caches and lock dicts with no eviction.
