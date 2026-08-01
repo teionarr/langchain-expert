@@ -100,7 +100,7 @@ This skill is **tested against real code, and the misses are recorded too.**
 | Filed / disclosed upstream | 1 public issue + PR · 4 private advisories · 5 packs ready |
 | Already reported by others | 2 |
 | Clean control cases | 2, plus 1 correct **N/A** |
-| External verdicts (merged fix / advisory / maintainer confirmation) | **0** — see the caution in VALIDATION.md |
+| External verdicts (merged fix / advisory / maintainer confirmation) | **1** — pipeshub-ai confirmed + fixed a real finding ([PR #2743](https://github.com/pipeshub-ai/pipeshub-ai/pull/2743)); one bug, not a rate |
 
 Every change to the rubric is traceable to the specific audit that exposed the gap. Full breakdown,
 including LangChain-depth ratings per repo → [VALIDATION.md](VALIDATION.md)

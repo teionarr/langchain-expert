@@ -60,7 +60,7 @@ flatters itself.
 | 2 | [gpt-researcher](https://github.com/assafelovic/gpt-researcher) | 28.5k | L2 | library + hand-rolled + graph | modern | 🟠 Source curator parses LLM JSON with bare `json.loads` while the rest of the codebase uses `json_repair` → fenced model output silently falls back to uncurated sources | **filed: [issue #1953](https://github.com/assafelovic/gpt-researcher/issues/1953) · [PR #1954](https://github.com/assafelovic/gpt-researcher/pull/1954)** |
 | 3 | [open_deep_research](https://github.com/langchain-ai/open_deep_research) | 12k | L4 | graph-native | modern | 🔴 `if is_token_limit_exceeded(e) or True:` — the `or True` makes the error classifier dead code, so any exception silently ends all research and is reported as normal completion | **already reported** by others ([#283](https://github.com/langchain-ai/open_deep_research/issues/283); PRs [#185](https://github.com/langchain-ai/open_deep_research/pull/185), [#286](https://github.com/langchain-ai/open_deep_research/pull/286) stalled) |
 | 4 | [onyx](https://github.com/onyx-dot-app/onyx) | 31k | L1 | — | — | No finding — LLM layer is litellm; `langchain_core.messages` appears only at an adapter boundary | **excluded at the shape gate** |
-| 5 | *withheld* | — | — | — | — | 🔴 Under coordinated disclosure | 🔒 privately disclosed |
+| 5 | [pipeshub-ai](https://github.com/pipeshub-ai/pipeshub-ai) | 3.1k | L4 | agent + tools | modern | 🔴 Per-record ACL bypass in the `fetch_full_record` **agent tool** — the fallback path fetched a record by key with no per-user check, so any user could read documents outside their permission scope by getting the agent to call the tool with a record id (agent-tool IDOR, practice 23) | ✅✅ **CONFIRMED + FIXED by maintainer** — [PR #2743](https://github.com/pipeshub-ai/pipeshub-ai/pull/2743) merged 2026-07-22; fix independently re-reviewed as complete |
 | 6 | *withheld* | — | — | — | — | 🔴 Under coordinated disclosure | 🔒 privately disclosed |
 | 7 | [fastapi-langgraph-template](https://github.com/wassim249/fastapi-langgraph-agent-production-ready-template) | 2.5k | L4 | graph-native | modern | 🟠 Model-fallback mutates a process-global singleton and never resets it — one transient error permanently switches the model for every subsequent request | quality issue — unreported |
 | 8 | [agent-service-toolkit](https://github.com/JoshuaC215/agent-service-toolkit) | 4.4k | L4 | graph-native | modern | Finding withheld pending disclosure | audited |
@@ -137,7 +137,13 @@ Pressure to reach a verdict produced *premature closure*, not rigour.
 count, not the survival rate. What survives is a procedural claim, not a statistical one — an executed
 fix is evidence; an argued one is an opinion.
 
-Treat every number on this page as provisional until an external verdict exists.
+**First external verdict (2026-07-22):** a maintainer confirmed and fixed one finding — pipeshub-ai's
+`fetch_full_record` agent-tool ACL bypass, [PR #2743](https://github.com/pipeshub-ai/pipeshub-ai/pull/2743),
+merged to main. One real bug, from the agent-tool authorization class, accepted and patched by the people
+who own the code. That is the project's first ground-truth confirmation that the skill finds real bugs —
+and it is exactly **one finding**. It does not validate the recall rate, the severity calls, or the other
+21 practices; those remain provisional. Treat every *other* number on this page as provisional until its
+own external verdict exists.
 
 ---
 
