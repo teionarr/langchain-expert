@@ -82,7 +82,7 @@ flatters itself.
 | 24 | [deer-flow](https://github.com/bytedance/deer-flow) | 79k | L4 | graph-native + gateway | modern | ✅ **Control — clean.** Full practice-23 pass. Auth on by default (fail-closed middleware); per-user isolation via an always-active owner-check decorator + fail-closed contextvar repository filter. Prior cross-user IDOR (issue #3472) verified **fixed**; run-scoping unification already tracked → fails novelty. Agent tools resolve identity from runtime, never model args | clean |
 
 | 25 | [rag-web-ui](https://github.com/rag-web-ui/rag-web-ui) | 3.1k | L2 | RAG web app | modern | Per-user IDOR-by-id surface **clean** (24 handlers, all owner-scoped; the one historical IDOR in this class already fixed). One security finding withheld pending disclosure: a missing-authorization / cross-user destructive endpoint (novel; `is_superuser` exists but unchecked) | 🔒 finding withheld — disclosure pending |
-| 26 | [Aix-DB](https://github.com/apconw/Aix-DB) | 2.2k | L3 | text2sql multi-agent | modern | Audit in progress (row-level permission-injection surface) | ⏳ auditing |
+| 26 | [Aix-DB](https://github.com/apconw/Aix-DB) | 2.2k | L3 | text2sql multi-agent | modern | Multiple security findings (incl. a Critical unauthenticated write to the row-permission subsystem, and a privilege-escalation) — verified against source, withheld pending disclosure. Also the core row-permission control is an LLM SQL-rewrite that **fails open** | 🔒 findings withheld — **no disclosure channel yet** |
 
 Repo names for rows 14–22 are withheld along with the findings, and star counts are rounded. Listing a
 popular product beside "unfixed vulnerability" is itself a pointer for an attacker and helps no defender
@@ -94,9 +94,9 @@ while the fix does not exist. Names are filled in as each advisory publishes.
 
 | Metric | Result |
 |---|---|
-| Repos reviewed | **25** (23 LangChain + 1 excluded at the shape gate + 1 out of scope) · 1 more auditing |
+| Repos reviewed | **26** (24 LangChain + 1 excluded at the shape gate + 1 out of scope) |
 | **External verdicts** | **1 confirmed + fixed** (pipeshub PR #2743) · 1 maintainer-engaged (MaxKB) |
-| Security findings under coordinated disclosure | **10 repos** |
+| Security findings under coordinated disclosure | **11 repos** (2 blocked for want of a channel) |
 | Lead findings **refuted** by adversarial review | **1** |
 | Filed or disclosed upstream | 1 public issue + PR · 1 confirmed+fixed advisory · 4 private disclosures · 5 packs ready |
 | Already reported by others | 2 |
