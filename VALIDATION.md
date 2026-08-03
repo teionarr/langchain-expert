@@ -78,6 +78,11 @@ flatters itself.
 | 20 | *withheld* | ~55k | L4 | — | — | Under coordinated disclosure — incl. a published advisory that **appears unfixed** | 🔒 pack ready |
 | 21 | *withheld* | ~12k | L4 | — | — | Under coordinated disclosure | 🔒 pack ready |
 | 22 | [LibreChat](https://github.com/danny-avila/LibreChat) | 41k | L3 | SDK-host / graph-native | modern | ❌ **Lead finding refuted.** A file-ownership guard that reads as a tautology — called with the same object as subject and baseline — turned out to be a deliberate model change the maintainer authored two weeks earlier, *inside the audited tree*, rewriting the test to assert exactly that behaviour. Agent ACL, not file ownership, is now the gate. 🟡 One survivor, Low: a shared MCP server config is writable behind a VIEW-only gate. | **refuted + Low → PR, not advisory** |
+| 23 | [khoj](https://github.com/khoj-ai/khoj) | 36k | L2–L3 | agent + tools | modern | ✅ **Control — clean.** Full practice-23 pass (two independent sweeps agreed): no reachable per-user IDOR. Two historical IDORs (subscription, Notion OAuth) + a path-traversal all verified **fixed, no incomplete-fix delta**. Agent tools bind `user` from server context; no tool `args_schema` carries a user/tenant field — the correct "identity in closure" shape | clean |
+| 24 | [deer-flow](https://github.com/bytedance/deer-flow) | 79k | L4 | graph-native + gateway | modern | ✅ **Control — clean.** Full practice-23 pass. Auth on by default (fail-closed middleware); per-user isolation via an always-active owner-check decorator + fail-closed contextvar repository filter. Prior cross-user IDOR (issue #3472) verified **fixed**; run-scoping unification already tracked → fails novelty. Agent tools resolve identity from runtime, never model args | clean |
+
+| 25 | [rag-web-ui](https://github.com/rag-web-ui/rag-web-ui) | 3.1k | L2 | RAG web app | modern | Per-user IDOR-by-id surface **clean** (24 handlers, all owner-scoped; the one historical IDOR in this class already fixed). One security finding withheld pending disclosure: a missing-authorization / cross-user destructive endpoint (novel; `is_superuser` exists but unchecked) | 🔒 finding withheld — disclosure pending |
+| 26 | [Aix-DB](https://github.com/apconw/Aix-DB) | 2.2k | L3 | text2sql multi-agent | modern | Audit in progress (row-level permission-injection surface) | ⏳ auditing |
 
 Repo names for rows 14–22 are withheld along with the findings, and star counts are rounded. Listing a
 popular product beside "unfixed vulnerability" is itself a pointer for an attacker and helps no defender
@@ -89,13 +94,14 @@ while the fix does not exist. Names are filled in as each advisory publishes.
 
 | Metric | Result |
 |---|---|
-| Repos reviewed | **22** (20 LangChain + 1 excluded at the shape gate + 1 out of scope) |
-| Security findings under coordinated disclosure | **9 repos** |
+| Repos reviewed | **25** (23 LangChain + 1 excluded at the shape gate + 1 out of scope) · 1 more auditing |
+| **External verdicts** | **1 confirmed + fixed** (pipeshub PR #2743) · 1 maintainer-engaged (MaxKB) |
+| Security findings under coordinated disclosure | **10 repos** |
 | Lead findings **refuted** by adversarial review | **1** |
-| Filed or disclosed upstream | 1 public issue + PR · 4 private security disclosures · 5 packs ready |
+| Filed or disclosed upstream | 1 public issue + PR · 1 confirmed+fixed advisory · 4 private disclosures · 5 packs ready |
 | Already reported by others | 2 |
 | Rejected as unmaintained / dead | 1 audited + 3 screened out before audit |
-| Clean / control cases | 2, plus 1 correct **N/A** on authorization |
+| Clean / control cases | **4** (aegra, khoj, deer-flow + 1 correct **N/A**) — big security-mature repos where the lens correctly found nothing |
 
 **The headline result: every high-severity finding, in both cohorts, came from the authorization class.**
 Before practice 23 existed, the two that surfaced did so on a hunch. With it active, **5 of the next 6
