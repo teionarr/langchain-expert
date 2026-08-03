@@ -84,6 +84,9 @@ flatters itself.
 | 25 | [rag-web-ui](https://github.com/rag-web-ui/rag-web-ui) | 3.1k | L2 | RAG web app | modern | Per-user IDOR-by-id surface **clean** (24 handlers, all owner-scoped; the one historical IDOR in this class already fixed). One security finding withheld pending disclosure: a missing-authorization / cross-user destructive endpoint (novel; `is_superuser` exists but unchecked) | 🔒 finding withheld — disclosure pending |
 | 26 | [Aix-DB](https://github.com/apconw/Aix-DB) | 2.2k | L3 | text2sql multi-agent | modern | Multiple security findings, two Critical + one High **confirmed end-to-end by an adversarial red-team** (told to refute): unauthenticated read/write/delete of the row-permission subsystem; hardcoded default JWT signing key → forge any admin token; privesc via `/user/update` admin password reset. Core row-permission control is an LLM SQL-rewrite that **fails open** | 🔒 withheld — maintainer email channel identified, disclosure pending |
 
+| 27 | [rag_api](https://github.com/danny-avila/rag_api) | 880 | L2 | RAG vector-store API | modern | 🟠 **Cross-tenant document-disclosure IDOR chain — confirmed by adversarial red-team.** `GET /ids` enumerates all tenants' file_ids → `GET /documents` + `GET /documents/{id}/context` read any tenant's document content, none filtering by user while the sibling `/query` does. Novel (issues #301/#303 cover other endpoints) | 🔒 withheld — advisory channel, disclosure pending |
+| 28 | [restai](https://github.com/apocas/restai) | 510 | L3 | multi-tenant AIaaS | modern | 🟠 **Cross-project KG-entity merge IDOR — confirmed by adversarial red-team.** `kg_merge_entity` authorizes the path project then merges/deletes entities by id with no project scoping; the "authorizes A, acts on B" shape. Every sibling handler scopes correctly — lone outlier | 🔒 withheld — advisory channel + SECURITY.md, disclosure pending |
+
 Repo names for rows 14–22 are withheld along with the findings, and star counts are rounded. Listing a
 popular product beside "unfixed vulnerability" is itself a pointer for an attacker and helps no defender
 while the fix does not exist. Names are filled in as each advisory publishes.
@@ -94,9 +97,9 @@ while the fix does not exist. Names are filled in as each advisory publishes.
 
 | Metric | Result |
 |---|---|
-| Repos reviewed | **26** (24 LangChain + 1 excluded at the shape gate + 1 out of scope) |
+| Repos reviewed | **28** (26 LangChain + 1 excluded at the shape gate + 1 out of scope) |
 | **External verdicts** | **1 confirmed + fixed** (pipeshub PR #2743) · 1 maintainer-engaged (MaxKB) |
-| Security findings under coordinated disclosure | **11 repos** (2 blocked for want of a channel) |
+| Security findings under coordinated disclosure | **13 repos** · 3 confirmed by adversarial red-team this round (Aix-DB, rag_api, restai); rag_api + restai have in-platform advisory channels |
 | Lead findings **refuted** by adversarial review | **1** |
 | Filed or disclosed upstream | 1 public issue + PR · 1 confirmed+fixed advisory · 4 private disclosures · 5 packs ready |
 | Already reported by others | 2 |
