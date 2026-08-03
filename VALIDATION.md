@@ -87,6 +87,8 @@ flatters itself.
 | 27 | [rag_api](https://github.com/danny-avila/rag_api) | 880 | L2 | RAG vector-store API | modern | 🟠 **Cross-tenant document-disclosure IDOR chain — confirmed by adversarial red-team.** `GET /ids` enumerates all tenants' file_ids → `GET /documents` + `GET /documents/{id}/context` read any tenant's document content, none filtering by user while the sibling `/query` does. Novel (issues #301/#303 cover other endpoints) | 🔒 withheld — advisory channel, disclosure pending |
 | 28 | [restai](https://github.com/apocas/restai) | 510 | L3 | multi-tenant AIaaS | modern | 🟠 **Cross-project KG-entity merge IDOR — confirmed by adversarial red-team.** `kg_merge_entity` authorizes the path project then merges/deletes entities by id with no project scoping; the "authorizes A, acts on B" shape. Every sibling handler scopes correctly — lone outlier | 🔒 withheld — advisory channel + SECURITY.md, disclosure pending |
 
+| 29 | [memanto](https://github.com/moorcheh-ai/memanto) | 1.8k | L1–L2 | memory server / LangGraph BaseStore | modern | ✅ **Control — clean.** Completeness-checked: 15 memory endpoints, 15 `enforce_session_scope` guards, 1:1. Token crypto-bound, no forgeable default; namespace scoping server-derived; UI loopback-gated on real TCP peer; legacy code unreachable | clean |
+
 Repo names for rows 14–22 are withheld along with the findings, and star counts are rounded. Listing a
 popular product beside "unfixed vulnerability" is itself a pointer for an attacker and helps no defender
 while the fix does not exist. Names are filled in as each advisory publishes.
@@ -97,14 +99,14 @@ while the fix does not exist. Names are filled in as each advisory publishes.
 
 | Metric | Result |
 |---|---|
-| Repos reviewed | **28** (26 LangChain + 1 excluded at the shape gate + 1 out of scope) |
+| Repos reviewed | **29** (27 LangChain + 1 excluded at the shape gate + 1 out of scope) |
 | **External verdicts** | **1 confirmed + fixed** (pipeshub PR #2743) · 1 maintainer-engaged (MaxKB) |
 | Security findings under coordinated disclosure | **13 repos** · 3 confirmed by adversarial red-team this round (Aix-DB, rag_api, restai); rag_api + restai have in-platform advisory channels |
 | Lead findings **refuted** by adversarial review | **1** |
 | Filed or disclosed upstream | 1 public issue + PR · 1 confirmed+fixed advisory · 4 private disclosures · 5 packs ready |
 | Already reported by others | 2 |
 | Rejected as unmaintained / dead | 1 audited + 3 screened out before audit |
-| Clean / control cases | **4** (aegra, khoj, deer-flow + 1 correct **N/A**) — big security-mature repos where the lens correctly found nothing |
+| Clean / control cases | **5** (aegra, khoj, deer-flow, memanto + 1 correct **N/A**) — well-hardened repos where the lens correctly found nothing |
 
 **The headline result: every high-severity finding, in both cohorts, came from the authorization class.**
 Before practice 23 existed, the two that surfaced did so on a hunch. With it active, **5 of the next 6
