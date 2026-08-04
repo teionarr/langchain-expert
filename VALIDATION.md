@@ -85,7 +85,7 @@ flatters itself.
 | 26 | [Aix-DB](https://github.com/apconw/Aix-DB) | 2.2k | L3 | text2sql multi-agent | modern | Multiple security findings, two Critical + one High **confirmed end-to-end by an adversarial red-team** (told to refute): unauthenticated read/write/delete of the row-permission subsystem; hardcoded default JWT signing key → forge any admin token; privesc via `/user/update` admin password reset. Core row-permission control is an LLM SQL-rewrite that **fails open** | 🔒 withheld — maintainer email channel identified, disclosure pending |
 
 | 27 | [rag_api](https://github.com/danny-avila/rag_api) | 880 | L2 | RAG vector-store API | modern | 🟠 **Cross-tenant document-disclosure IDOR chain — confirmed by adversarial red-team.** `GET /ids` enumerates all tenants' file_ids → `GET /documents` + `GET /documents/{id}/context` read any tenant's document content, none filtering by user while the sibling `/query` does. Novel (issues #301/#303 cover other endpoints) | ✅ **submitted via GitHub advisory** |
-| 28 | [restai](https://github.com/apocas/restai) | 510 | L3 | multi-tenant AIaaS | modern | 🟠 **Cross-project KG-entity merge IDOR — confirmed by adversarial red-team.** `kg_merge_entity` authorizes the path project then merges/deletes entities by id with no project scoping; the "authorizes A, acts on B" shape. Every sibling handler scopes correctly — lone outlier | ✅ **submitted via GitHub advisory** |
+| 28 | [restai](https://github.com/apocas/restai) | 510 | L3 | multi-tenant AIaaS | modern | 🟠 **Cross-project KG-entity merge IDOR — confirmed by adversarial red-team.** `kg_merge_entity` authorizes the path project then merges/deletes entities by id with no project scoping; the "authorizes A, acts on B" shape. Every sibling handler scopes correctly — lone outlier | ✅✅ **CONFIRMED + FIXED** — maintainer accepted [GHSA-r3px-wf48-988x](https://github.com/apocas/restai/security/advisories/GHSA-r3px-wf48-988x) (High) and fixed in [7a1f7d4](https://github.com/apocas/restai/commit/7a1f7d4cef0115d22f27d10901304c8fc6185f26) (merged); fix independently re-reviewed as complete (both layers + regression test) |
 
 | 29 | [memanto](https://github.com/moorcheh-ai/memanto) | 1.8k | L1–L2 | memory server / LangGraph BaseStore | modern | ✅ **Control — clean.** Completeness-checked: 15 memory endpoints, 15 `enforce_session_scope` guards, 1:1. Token crypto-bound, no forgeable default; namespace scoping server-derived; UI loopback-gated on real TCP peer; legacy code unreachable | clean |
 
@@ -100,7 +100,7 @@ while the fix does not exist. Names are filled in as each advisory publishes.
 | Metric | Result |
 |---|---|
 | Repos reviewed | **29** (27 LangChain + 1 excluded at the shape gate + 1 out of scope) |
-| **External verdicts** | **1 confirmed + fixed** (pipeshub PR #2743) · 1 maintainer-engaged (MaxKB) |
+| **External verdicts** | **2 confirmed + fixed** (pipeshub PR #2743 · restai GHSA-r3px-wf48-988x, High) · 1 maintainer-engaged (MaxKB) · 3 more advisories submitted |
 | Security findings under coordinated disclosure | **13 repos** · 3 confirmed by adversarial red-team this round (Aix-DB, rag_api, restai); rag_api + restai have in-platform advisory channels |
 | Lead findings **refuted** by adversarial review | **1** |
 | Filed or disclosed upstream | 1 public issue + PR · **1 confirmed+fixed** (pipeshub) · **5 GitHub advisories submitted** (MaxKB, rag_api, restai, kotaemon, Flowise) · Flowise carries a live PoC (incomplete-fix of CVE-2026-41279) |
